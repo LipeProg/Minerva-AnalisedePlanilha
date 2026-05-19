@@ -1,0 +1,39 @@
+{% extends 'dashboard/base.html' %}
+
+{% block titulo %}Upload - DataDash{% endblock %}
+
+{% block conteudo %}
+    <h2 style="margin-bottom: 30px; color: #2c3e50;">Enviar Planilha</h2>
+
+    <div style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
+        <h3 style="color: #2c3e50; margin-bottom: 20px;">Formato da Planilha</h3>
+        <p style="margin-bottom: 15px; color: #7f8c8d;">A planilha deve conter as seguintes colunas:</p>
+        <ul style="margin-left: 20px; margin-bottom: 20px; color: #7f8c8d;">
+            <li><strong>data</strong> - Data da venda (formato: DD/MM/YYYY ou similar)</li>
+            <li><strong>produto</strong> - Nome do produto</li>
+            <li><strong>categoria</strong> - Categoria do produto</li>
+            <li><strong>quantidade</strong> - Quantidade vendida</li>
+            <li><strong>preco_unitario</strong> - Preço unitário do produto</li>
+        </ul>
+        <p style="color: #7f8c8d; font-size: 12px;">Formatos aceitos: CSV ou XLSX</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" style="margin-top: 30px;">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 20px;">
+            <label for="id_arquivo">Selecione o arquivo:</label>
+            {{ form.arquivo }}
+        </div>
+
+        <button type="submit" style="font-size: 16px; padding: 12px 30px;">📤 Enviar Planilha</button>
+    </form>
+
+    <!-- Exemplo de arquivo -->
+    <div style="background-color: #ecf0f1; padding: 20px; border-radius: 8px; margin-top: 30px;">
+        <h3 style="color: #2c3e50; margin-bottom: 15px;">Exemplo de Planilha</h3>
+        <p style="color: #7f8c8d; margin-bottom: 15px;">Um arquivo de exemplo chamado <strong>exemplo_vendas.csv</strong> está disponível na raiz do projeto para referência.</p>
+        <p style="color: #7f8c8d; font-size: 12px;">Este arquivo pode ser usado como referência para criar sua própria planilha.</p>
+    </div>
+
+{% endblock %}

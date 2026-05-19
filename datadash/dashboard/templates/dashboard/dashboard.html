@@ -1,0 +1,171 @@
+{% extends 'dashboard/base.html' %}
+
+{% block titulo %}Dashboard - DataDash{% endblock %}
+
+{% block conteudo %}
+    <h2 style="margin-bottom: 30px; color: #2c3e50;">Bem-vindo ao Dashboard</h2>
+
+    <!-- Cards de Indicadores -->
+    <div class="cards-container">
+        <div class="card">
+            <h3>Faturamento Total</h3>
+            <div class="valor">R$ {{ total_faturamento }}</div>
+        </div>
+        <div class="card">
+            <h3>Total de Vendas</h3>
+            <div class="valor">{{ total_vendas }}</div>
+        </div>
+        <div class="card">
+            <h3>Total de Itens</h3>
+            <div class="valor">{{ total_itens }}</div>
+        </div>
+        <div class="card">
+            <h3>Ticket Médio</h3>
+            <div class="valor">R$ {{ ticket_medio }}</div>
+        </div>
+        <div class="card">
+            <h3>Produto Mais Vendido</h3>
+            <div class="valor" style="font-size: 18px;">{{ produto_mais_vendido }}</div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="graficos-container">
+        <div class="grafico">
+            <h3>Faturamento por Categoria</h3>
+            <canvas id="graficoCategoria"></canvas>
+        </div>
+        <div class="grafico">
+            <h3>Quantidade Vendida por Produto</h3>
+            <canvas id="graficoProduto"></canvas>
+        </div>
+        <div class="grafico">
+            <h3>Faturamento por Mês</h3>
+            <canvas id="graficoMes"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabela de Últimas Vendas -->
+    {% if ultimas_vendas %}
+        <div class="tabela-container">
+            <h3>Últimas Vendas Importadas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Faturamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venda in ultimas_vendas %}
+                        <tr>
+                            <td>{{ venda.data|date:"d/m/Y" }}</td>
+                            <td>{{ venda.produto }}</td>
+                            <td>{{ venda.categoria }}</td>
+                            <td>{{ venda.quantidade }}</td>
+                            <td>R$ {{ venda.preco_unitario|floatformat:2 }}</td>
+                            <td>R$ {{ venda.faturamento|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="tabela-container">
+            <p style="color: #95a5a6;">Nenhuma venda importada ainda. <a href="{% url 'dashboard:upload' %}">Clique aqui</a> para fazer upload de uma planilha.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // Dados do backend convertidos para JSON
+        const dadosCategoria = {{ dados_categoria|safe }};
+        const dadosProduto = {{ dados_produto|safe }};
+        const dadosMes = {{ dados_mes|safe }};
+
+        // Gráfico 1: Faturamento por Categoria
+        if (dadosCategoria.labels.length > 0) {
+            const ctxCategoria = document.getElementById('graficoCategoria').getContext('2d');
+            new Chart(ctxCategoria, {
+                type: 'bar',
+                data: {
+                    labels: dadosCategoria.labels,
+                    datasets: [{
+                        label: 'Faturamento (R$)',
+                        data: dadosCategoria.valores,
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico 2: Quantidade Vendida por Produto
+        if (dadosProduto.labels.length > 0) {
+            const ctxProduto = document.getElementById('graficoProduto').getContext('2d');
+            new Chart(ctxProduto, {
+                type: 'doughnut',
+                data: {
+                    labels: dadosProduto.labels,
+                    datasets: [{
+                        label: 'Quantidade',
+                        data: dadosProduto.valores,
+                        backgroundColor: [
+                            '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+                            '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#16a085'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+        }
+
+        // Gráfico 3: Faturamento por Mês
+        if (dadosMes.labels.length > 0) {
+            const ctxMes = document.getElementById('graficoMes').getContext('2d');
+            new Chart(ctxMes, {
+                type: 'line',
+                data: {
+                    labels: dadosMes.labels,
+                    datasets: [{
+                        label: 'Faturamento (R$)',
+                        data: dadosMes.valores,
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

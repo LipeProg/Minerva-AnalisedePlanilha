@@ -1,0 +1,23 @@
+{% extends 'dashboard/base.html' %}
+
+{% block titulo %}Limpar Dados - DataDash{% endblock %}
+
+{% block conteudo %}
+    <div class="confirmacao-box">
+        <h2>⚠️ Limpar Todos os Dados</h2>
+        <p>Você tem certeza que deseja remover TODOS os dados importados? Esta ação não pode ser desfeita.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="submit" name="confirmar" class="btn btn-danger" style="padding: 12px 30px;">
+                    Sim, Limpar Tudo
+                </button>
+                <a href="{% url 'dashboard:dados' %}" class="btn" style="padding: 12px 30px;">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

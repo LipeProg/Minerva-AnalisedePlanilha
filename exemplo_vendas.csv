@@ -1,0 +1,15 @@
+data,produto,categoria,quantidade,preco_unitario
+01/01/2024,Notebook,Eletrônicos,2,2500.00
+05/01/2024,Mouse,Periféricos,10,50.00
+08/01/2024,Teclado,Periféricos,5,150.00
+12/01/2024,Monitor,Eletrônicos,3,800.00
+15/01/2024,Webcam,Periféricos,8,200.00
+18/01/2024,Headset,Periféricos,6,300.00
+22/01/2024,Mousepad,Acessórios,15,30.00
+25/01/2024,Cabo USB,Acessórios,20,25.00
+28/01/2024,Hub USB,Periféricos,4,120.00
+02/02/2024,SSD 240GB,Armazenamento,7,350.00
+05/02/2024,Memória RAM,Componentes,5,400.00
+10/02/2024,Processador,Componentes,2,1200.00
+15/02/2024,Placa Mãe,Componentes,3,600.00
+20/02/2024,Fonte,Componentes,4,500.00

@@ -1,0 +1,81 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║                    🚀 DataDash - Dashboard de Planilhas                   ║
+║                     Projeto Django Acadêmico Completo                     ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+📖 COMECE LENDO ISTO:
+
+   1️⃣  COMECE_AQUI.md
+       └─ Guia passo a passo para começar (obrigatório!)
+
+   2️⃣  QUICKSTART.md
+       └─ Rodar em 5 minutos
+
+   3️⃣  README.md
+       └─ Documentação completa
+
+═══════════════════════════════════════════════════════════════════════════
+
+⚡ PRÓXIMOS PASSOS RÁPIDOS:
+
+   $ source venv/bin/activate          # Ativar ambiente
+   $ pip install -r requirements.txt   # Instalar dependências
+   $ cd datadash                        # Ir para pasta
+   $ python manage.py migrate          # Criar banco
+   $ python manage.py runserver        # Rodar servidor
+   
+   Depois abra: http://127.0.0.1:8000
+
+═══════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTAÇÃO DISPONÍVEL:
+
+   ✅ COMECE_AQUI.md          ← Ponto de partida
+   ✅ QUICKSTART.md           ← 5 minutos
+   ✅ README.md               ← Tudo explicado
+   ✅ TROUBLESHOOTING.md      ← Erros e soluções
+   ✅ APRESENTACAO.md         ← Para apresentar em aula
+   ✅ REFERENCIA_TECNICA.md   ← Detalhes técnicos
+   ✅ SUMARIO.md              ← Resumo visual
+   ✅ CHECKLIST.md            ← Verificação
+   ✅ INDICE.md               ← Índice completo
+   ✅ COMANDOS_RAPIDOS.sh     ← Comandos úteis
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎯 O QUE VOCÊ TEM:
+
+   ✓ Projeto Django completo
+   ✓ Banco MySQL pré-configurado
+   ✓ Models e Views prontas
+   ✓ Templates HTML com CSS
+   ✓ Gráficos Chart.js
+   ✓ Upload de CSV/XLSX
+   ✓ Admin do Django
+   ✓ 10 documentos (!)
+   ✓ Arquivo de teste
+
+═══════════════════════════════════════════════════════════════════════════
+
+🆘 PRECISA DE AJUDA?
+
+   ❌ Deu erro?           → TROUBLESHOOTING.md
+   ❓ Como funciona?      → REFERENCIA_TECNICA.md
+   🎓 Vai apresentar?     → APRESENTACAO.md
+   ⚡ Pressa?             → QUICKSTART.md
+   📖 Tudo?               → README.md
+
+═══════════════════════════════════════════════════════════════════════════
+
+🚀 COMECE AGORA:
+
+   1. Abra COMECE_AQUI.md
+   2. Siga as instruções
+   3. Teste com exemplo_vendas.csv
+   4. Apresente com confiança!
+
+═══════════════════════════════════════════════════════════════════════════
+
+📊 Projeto DataDash | Django Acadêmico | 2024

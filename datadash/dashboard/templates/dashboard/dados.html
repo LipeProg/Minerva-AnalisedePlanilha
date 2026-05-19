@@ -1,0 +1,71 @@
+{% extends 'dashboard/base.html' %}
+
+{% block titulo %}Dados - DataDash{% endblock %}
+
+{% block conteudo %}
+    <h2 style="margin-bottom: 30px; color: #2c3e50;">Dados Importados</h2>
+
+    <!-- Informações dos Arquivos -->
+    {% if arquivos %}
+        <div class="tabela-container" style="margin-bottom: 30px;">
+            <h3>Histórico de Uploads</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome do Arquivo</th>
+                        <th>Data de Upload</th>
+                        <th>Total de Linhas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for arquivo in arquivos %}
+                        <tr>
+                            <td>{{ arquivo.nome_arquivo }}</td>
+                            <td>{{ arquivo.data_upload|date:"d/m/Y H:i" }}</td>
+                            <td>{{ arquivo.total_linhas }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <!-- Dados de Vendas -->
+    {% if vendas %}
+        <div class="tabela-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Vendas Registradas ({{ total_vendas }})</h3>
+                <a href="{% url 'dashboard:limpar' %}" class="btn btn-danger">🗑️ Limpar Dados</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Faturamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venda in vendas %}
+                        <tr>
+                            <td>{{ venda.data|date:"d/m/Y" }}</td>
+                            <td>{{ venda.produto }}</td>
+                            <td>{{ venda.categoria }}</td>
+                            <td>{{ venda.quantidade }}</td>
+                            <td>R$ {{ venda.preco_unitario|floatformat:2 }}</td>
+                            <td>R$ {{ venda.faturamento|floatformat:2 }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="tabela-container">
+            <p style="color: #95a5a6;">Nenhuma venda importada ainda. <a href="{% url 'dashboard:upload' %}" style="color: #3498db; text-decoration: none;">Clique aqui</a> para fazer upload de uma planilha.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
