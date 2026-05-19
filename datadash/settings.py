@@ -2,6 +2,7 @@
 Django settings for datadash project.
 """
 
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dashboard',
+    'datadash.dashboard',
 ]
 
 MIDDLEWARE = [
@@ -52,16 +53,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'datadash.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'datadash_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+DB_ENGINE = os.getenv('DATADASH_DB_ENGINE', 'sqlite').lower()
+
+if DB_ENGINE == 'mysql':
+    import pymysql
+
+    pymysql.install_as_MySQLdb()
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DATADASH_DB_NAME', 'datadash_db'),
+            'USER': os.getenv('DATADASH_DB_USER', 'root'),
+            'PASSWORD': os.getenv('DATADASH_DB_PASSWORD', ''),
+            'HOST': os.getenv('DATADASH_DB_HOST', 'localhost'),
+            'PORT': os.getenv('DATADASH_DB_PORT', '3306'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

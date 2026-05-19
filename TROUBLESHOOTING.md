@@ -1,228 +1,124 @@
-# TROUBLESHOOTING E FAQ
+# TROUBLESHOOTING
 
-## Problemas Comuns
+## 1. `No module named django`
 
-### 1. Erro: "mysqlclient not found" ou "No module named 'MySQLdb'"
+Crie e ative o ambiente virtual antes de instalar:
 
-**Causa:** A biblioteca `mysqlclient` não está instalada ou não conseguiu compilar.
-
-**Solução 1 (Linux):**
 ```bash
-sudo apt-get install python3-dev default-libmysqlclient-dev
-pip install mysqlclient
+cd /caminho/para/Minerva-AnalisedePlanilha
+python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install -r requirements.txt
 ```
 
-**Solução 2 (Windows) - Use PyMySQL:**
+## 2. `requirements.txt` nao foi encontrado
+
+Voce provavelmente esta fora da pasta do projeto.
+
+Entre na raiz e confira:
+
 ```bash
-pip uninstall mysqlclient
-pip install PyMySQL
+cd /caminho/para/Minerva-AnalisedePlanilha
+ls
 ```
 
-Depois, adicione isto ao final do arquivo `datadash/settings.py`:
-```python
-import pymysql
-pymysql.install_as_MySQLdb()
-```
+Voce precisa ver:
 
-**Solução 3 (Mac):**
+- `requirements.txt`
+- `datadash/`
+
+## 3. `zsh: command not found: python`
+
+Use `python3` no lugar de `python`:
+
 ```bash
-brew install mysql
-pip install mysqlclient
+python3 datadash/manage.py runserver
 ```
 
----
+Se estiver com o ambiente virtual ativado, `python3` continua funcionando normalmente.
 
-### 2. Erro: "Access denied for user 'root'@'localhost'"
+## 4. `pip install -r requirements.txt` falha
 
-**Causa:** Senha ou credenciais do MySQL estão incorretas.
+Atualize o `pip` dentro do ambiente e tente de novo:
 
-**Solução:**
-1. Edite `datadash/settings.py`
-2. Na seção `DATABASES`, altere `USER` e `PASSWORD`
-3. Exemplo com senha:
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'datadash_db',
-        'USER': 'root',
-        'PASSWORD': 'sua_senha_aqui',  # <- Altere isso
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+```bash
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 ```
 
----
+## 5. `python3 -m venv venv` falha com `ensurepip is not available`
 
-### 3. Erro: "Unknown database 'datadash_db'"
+No Debian/Ubuntu, instale o pacote do venv:
 
-**Causa:** O banco de dados não foi criado no MySQL.
+```bash
+sudo apt install python3-venv
+```
 
-**Solução:**
-1. Abra o MySQL Command Line ou MySQL Workbench
-2. Execute:
+## 6. `python3 datadash/manage.py migrate` falha com MySQL
+
+O projeto usa `sqlite3` por padrao. Se voce nao precisa de MySQL, remova a variavel:
+
+```bash
+unset DATADASH_DB_ENGINE
+```
+
+Depois rode:
+
+```bash
+python3 datadash/manage.py migrate
+```
+
+Se voce quer mesmo MySQL, confira:
+
+- `DATADASH_DB_ENGINE=mysql`
+- banco `datadash_db` criado
+- usuario e senha corretos nas variaveis de ambiente
+
+## 7. `Unknown database 'datadash_db'`
+
+Crie o banco antes das migrations:
+
 ```sql
 CREATE DATABASE datadash_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
----
+## 8. `Access denied for user`
 
-### 4. Erro ao fazer migrations: "No such table: dashboard_venda"
+Ajuste as variaveis:
 
-**Causa:** Você não rodou as migrations ainda.
-
-**Solução:**
 ```bash
-python datadash/manage.py makemigrations
-python datadash/manage.py migrate
+export DATADASH_DB_USER=seu_usuario
+export DATADASH_DB_PASSWORD=sua_senha
 ```
 
----
+## 9. `No such file or directory: manage.py`
 
-### 5. ImportError: No module named 'django'
+Rode os comandos a partir da raiz do projeto usando:
 
-**Causa:** Django não está instalado no ambiente virtual.
-
-**Solução:**
 ```bash
-source venv/bin/activate  # No Linux/Mac
-# ou
-venv\Scripts\activate  # No Windows
-
-pip install -r requirements.txt
+python3 datadash/manage.py runserver
 ```
 
----
+Ou entre na pasta `datadash/` antes de usar `python3 manage.py`.
 
-### 6. "No such file or directory: 'manage.py'"
+## 10. Upload retorna erro de coluna
 
-**Causa:** Você está rodando o comando fora da pasta correta.
+Verifique se sua planilha tem estas colunas:
 
-**Solução:**
-Certifique-se de estar DENTRO da pasta `datadash`:
-```bash
-cd datadash
-python manage.py runserver
-```
+- `data`
+- `produto`
+- `categoria`
+- `quantidade`
+- `preco_unitario`
 
----
+## 11. Graficos nao aparecem
 
-### 7. Upload de arquivo retorna erro
+Confira se houve upload com sucesso e se o navegador conseguiu carregar o CDN do Chart.js.
 
-**Causa:** A planilha pode ter formato incorreto ou colunas faltantes.
+## 12. Porta 8000 ocupada
 
-**Verificar:**
-- A planilha tem as colunas: `data`, `produto`, `categoria`, `quantidade`, `preco_unitario`?
-- O arquivo é CSV ou XLSX?
-- Os dados estão corretos (sem valores nulos nas colunas obrigatórias)?
-
-**Solução:**
-1. Baixe o arquivo `exemplo_vendas.csv` como referência
-2. Use-o como modelo para sua planilha
-3. Certifique-se de usar a mesma formatação
-
----
-
-### 8. Gráficos não aparecem no dashboard
-
-**Causa:** Pode ser um erro de JavaScript ou dados não foram importados.
-
-**Verificar:**
-1. Você fez upload de uma planilha?
-2. Abra o Console do Navegador (F12) e procure por erros
-3. Certifique-se de que o Chart.js foi carregado (linha de CDN no base.html)
-
----
-
-### 9. "CSRF token missing or incorrect"
-
-**Causa:** Problema com proteção CSRF do Django.
-
-**Solução:**
-1. Certifique-se de que o template contém `{% csrf_token %}`
-2. Limpe o cache do navegador (Ctrl+Shift+Del)
-3. Reinicie o servidor Django
-
----
-
-### 10. Porta 8000 já está em uso
-
-**Causa:** Outro processo já está usando a porta 8000.
-
-**Solução:**
 Use outra porta:
-```bash
-python datadash/manage.py runserver 8001
-```
-
----
-
-## Dicas e Truques
-
-### Resetar o Banco de Dados Completamente
 
 ```bash
-# Apagar todas as tabelas e começar do zero
-python datadash/manage.py flush
-
-# Depois rodar as migrations novamente
-python datadash/manage.py migrate
+python3 datadash/manage.py runserver 8001
 ```
-
-### Ver logs de SQL
-
-Adicione isto a `settings.py` para ver as queries SQL:
-```python
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
-```
-
-### Criar um Superusuário Automático (Script)
-
-Crie um arquivo `criar_admin.py` na raiz do projeto:
-```python
-import os
-import django
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'datadash.settings')
-django.setup()
-
-from django.contrib.auth.models import User
-
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-    print("Superusuário 'admin' criado com sucesso!")
-else:
-    print("Superusuário já existe!")
-```
-
-Execute com:
-```bash
-python datadash/manage.py shell < criar_admin.py
-```
-
----
-
-## Contato e Suporte
-
-Se encontrar outros problemas:
-1. Verifique a documentação oficial do Django: https://docs.djangoproject.com/
-2. Procure no Stack Overflow por mensagens de erro similares
-3. Verifique se todas as dependências estão instaladas: `pip list`
-
----
-
-**Boa sorte com seu projeto! 🚀**

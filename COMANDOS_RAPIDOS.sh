@@ -6,8 +6,11 @@
 # 1️⃣ CONFIGURAÇÃO INICIAL
 # ============================================
 
+# Entrar na raiz do projeto
+cd /caminho/para/Minerva-AnalisedePlanilha
+
 # Criar ambiente virtual
-python -m venv venv
+python3 -m venv venv
 
 # Ativar (Linux/Mac)
 source venv/bin/activate
@@ -16,39 +19,44 @@ source venv/bin/activate
 # venv\Scripts\activate
 
 # Instalar dependências
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 
 # ============================================
 # 2️⃣ BANCO DE DADOS
 # ============================================
 
-# Criar banco MySQL (execute no MySQL)
-# CREATE DATABASE datadash_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# Padrão: sqlite3 (não precisa criar banco manualmente)
+python3 datadash/manage.py migrate
 
-# Fazer migrations
-cd datadash
-python manage.py makemigrations
-python manage.py migrate
+# Opcional: usar MySQL
+# export DATADASH_DB_ENGINE=mysql
+# export DATADASH_DB_NAME=datadash_db
+# export DATADASH_DB_USER=root
+# export DATADASH_DB_PASSWORD=
+# export DATADASH_DB_HOST=localhost
+# export DATADASH_DB_PORT=3306
+# CREATE DATABASE datadash_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# python3 datadash/manage.py migrate
 
 # ============================================
 # 3️⃣ ADMIN E USUÁRIOS
 # ============================================
 
 # Criar superusuário
-python manage.py createsuperuser
+python3 datadash/manage.py createsuperuser
 
 # Reset de banco (cuidado!)
-# python manage.py flush
+# python3 datadash/manage.py flush
 
 # ============================================
 # 4️⃣ RODAR PROJETO
 # ============================================
 
 # Rodar servidor (porta padrão 8000)
-python manage.py runserver
+python3 datadash/manage.py runserver
 
 # Rodar em porta diferente
-# python manage.py runserver 8001
+# python3 datadash/manage.py runserver 8001
 
 # ============================================
 # 5️⃣ ACESSOS
@@ -64,23 +72,23 @@ python manage.py runserver
 # ============================================
 
 # Shell Django interativo
-# python manage.py shell
+# python3 datadash/manage.py shell
 
 # Ver dados no banco
-# python manage.py dbshell
+# python3 datadash/manage.py dbshell
 
 # ============================================
 # 7️⃣ TROUBLESHOOTING
 # ============================================
 
 # Verificar versão Django
-# python -m django --version
+# python3 datadash/manage.py --version
 
 # Listar dependências
 # pip list
 
 # Reinstalar dependências
-# pip install --upgrade -r requirements.txt
+# python3 -m pip install --upgrade -r requirements.txt
 
 # ============================================
 # 8️⃣ ARQUIVO DE TESTE

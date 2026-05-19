@@ -1,13 +1,35 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.db.models import Sum, Count, Avg, F
-from django.utils import timezone
-from datetime import datetime
+from django.db.models import Sum, F
+from io import BytesIO, StringIO
 import pandas as pd
 import json
 
 from .models import Venda, ArquivoImportado
 from .forms import UploadPlanilhaForm
+
+
+def ler_planilha(arquivo):
+    """Ler CSV/XLSX com opções mais tolerantes para arquivos comuns."""
+    nome = arquivo.name.lower()
+    conteudo = arquivo.read()
+
+    if nome.endswith('.csv'):
+        ultimo_erro = None
+
+        for encoding in ('utf-8', 'latin1'):
+            try:
+                texto = conteudo.decode(encoding)
+                return pd.read_csv(StringIO(texto), sep=None, engine='python')
+            except Exception as exc:
+                ultimo_erro = exc
+
+        raise ultimo_erro
+
+    if nome.endswith('.xlsx'):
+        return pd.read_excel(BytesIO(conteudo))
+
+    raise ValueError('Formato de arquivo não suportado. Use CSV ou XLSX.')
 
 
 def dashboard(request):
@@ -101,17 +123,12 @@ def upload(request):
             arquivo = request.FILES['arquivo']
             try:
                 # Determinar tipo de arquivo
-                if arquivo.name.endswith('.csv'):
-                    df = pd.read_csv(arquivo)
-                elif arquivo.name.endswith('.xlsx'):
-                    df = pd.read_excel(arquivo)
-                else:
-                    messages.error(request, 'Formato de arquivo não suportado. Use CSV ou XLSX.')
-                    return redirect('dashboard:upload')
+                df = ler_planilha(arquivo)
                 
                 # Verificar colunas obrigatórias
                 colunas_obrigatorias = ['data', 'produto', 'categoria', 'quantidade', 'preco_unitario']
-                colunas_df = [col.lower().strip() for col in df.columns]
+                df.columns = [col.lower().strip() for col in df.columns]
+                colunas_df = list(df.columns)
                 
                 for coluna in colunas_obrigatorias:
                     if coluna not in colunas_df:
@@ -122,9 +139,9 @@ def upload(request):
                 vendas_criadas = 0
                 erros = 0
                 
-                for index, row in df.iterrows():
+                for _, row in df.iterrows():
                     try:
-                        data = pd.to_datetime(row['data']).date()
+                        data = pd.to_datetime(row['data'], dayfirst=True, errors='raise').date()
                         produto = str(row['produto']).strip()
                         categoria = str(row['categoria']).strip()
                         quantidade = int(row['quantidade'])
@@ -140,7 +157,7 @@ def upload(request):
                             faturamento=faturamento
                         )
                         vendas_criadas += 1
-                    except Exception as e:
+                    except Exception:
                         erros += 1
                         continue
                 
