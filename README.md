@@ -1,16 +1,97 @@
-# DataDash - Dashboard de Planilhas
+# DataDash
 
-## Descricao
+Aplicacao web em Django para importar planilhas de vendas em `CSV` ou `XLSX`, armazenar os registros no banco e exibir um dashboard com indicadores, graficos e listagem dos dados importados.
 
-DataDash e um projeto Django academico para importar uma planilha de vendas e mostrar indicadores, graficos e uma tabela com os registros processados.
+## Stack
 
-## Funcionalidades
+- Python
+- Django 4.2
+- Pandas
+- OpenPyXL
+- Chart.js
+- SQLite por padrao
+- MySQL opcional via variaveis de ambiente
 
-- Upload de arquivos CSV e XLSX
-- Dashboard com cards de resumo
-- Graficos com Chart.js
-- Tabela com vendas importadas
-- Painel administrativo do Django
+## O que o projeto faz
+
+- Upload de planilhas de vendas em `CSV` e `XLSX`
+- Validacao das colunas obrigatorias
+- Importacao dos registros para o banco
+- Dashboard com faturamento, total de vendas, total de itens e ticket medio
+- Graficos por categoria, produto e mes
+- Tela para consultar os dados importados
+- Acao para limpar os dados carregados
+- Admin do Django em `/admin/`
+
+## Estrutura principal
+
+```text
+.
+├── datadash/
+│   ├── manage.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── dashboard/
+│       ├── models.py
+│       ├── views.py
+│       ├── forms.py
+│       ├── urls.py
+│       └── templates/dashboard/
+├── exemplo_vendas.csv
+└── requirements.txt
+```
+
+## Requisitos
+
+- Python 3.8 ou superior
+- `pip`
+- Ambiente virtual recomendado
+
+## Dependencias
+
+As dependencias do projeto estao em `requirements.txt`:
+
+- `Django`
+- `pandas`
+- `openpyxl`
+- `PyMySQL`
+
+## Banco de dados
+
+Por padrao o projeto usa `SQLite` e cria o arquivo `db.sqlite3` automaticamente apos as migracoes.
+
+Se voce quiser usar `MySQL`, configure estas variaveis antes de rodar as migracoes:
+
+```bash
+export DATADASH_DB_ENGINE=mysql
+export DATADASH_DB_NAME=datadash_db
+export DATADASH_DB_USER=root
+export DATADASH_DB_PASSWORD=
+export DATADASH_DB_HOST=localhost
+export DATADASH_DB_PORT=3306
+```
+
+## Como rodar
+
+Na raiz do projeto:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install -r requirements.txt
+python3 datadash/manage.py migrate
+python3 datadash/manage.py runserver
+```
+
+Depois acesse `http://127.0.0.1:8000`.
+
+## Rotas principais
+
+- `/` dashboard principal
+- `/upload/` envio de planilhas
+- `/dados/` visualizacao dos dados importados
+- `/limpar/` limpeza dos dados
+- `/admin/` painel administrativo
 
 ## Formato esperado da planilha
 
@@ -30,76 +111,18 @@ data,produto,categoria,quantidade,preco_unitario
 05/01/2024,Mouse,Perifericos,10,50.00
 ```
 
-## Instalacao
+O projeto inclui o arquivo [exemplo_vendas.csv](/media/bardo/Developer/Repositorio/Portifolio/Minerva-AnalisedePlanilha/exemplo_vendas.csv) para teste.
 
-### Opcao mais simples: sqlite3
+## Fluxo rapido de teste
 
-Entre primeiro na raiz do projeto:
+1. Rode o servidor.
+2. Abra `/upload/`.
+3. Envie `exemplo_vendas.csv`.
+4. Consulte o dashboard em `/` e a listagem em `/dados/`.
 
-```bash
-cd /caminho/para/Minerva-AnalisedePlanilha
-```
+## Observacoes
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
-python3 -m pip install -r requirements.txt
-python3 datadash/manage.py migrate
-python3 datadash/manage.py createsuperuser
-python3 datadash/manage.py runserver
-```
-
-O banco `db.sqlite3` sera criado automaticamente na raiz do projeto.
-
-### Opcao com MySQL
-
-Instale as dependencias, crie o banco e exporte as variaveis:
-
-```bash
-export DATADASH_DB_ENGINE=mysql
-export DATADASH_DB_NAME=datadash_db
-export DATADASH_DB_USER=root
-export DATADASH_DB_PASSWORD=
-export DATADASH_DB_HOST=localhost
-export DATADASH_DB_PORT=3306
-```
-
-```sql
-CREATE DATABASE datadash_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-Depois rode:
-
-```bash
-python3 datadash/manage.py migrate
-python3 datadash/manage.py runserver
-```
-
-## Como testar
-
-1. Abra `http://127.0.0.1:8000`
-2. Acesse `http://127.0.0.1:8000/upload/`
-3. Envie `exemplo_vendas.csv`
-4. Volte ao dashboard
-
-## Estrutura principal
-
-```text
-Minerva-AnalisedePlanilha/
-├── datadash/
-│   ├── manage.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── dashboard/
-├── requirements.txt
-├── exemplo_vendas.csv
-├── COMECE_AQUI.md
-├── QUICKSTART.md
-└── TROUBLESHOOTING.md
-```
-
-## Observacoes tecnicas
-
-- O projeto usa `sqlite3` por padrao para reduzir atrito na primeira execucao
-- Se o arquivo CSV vier com `;` ou codificacao diferente, o upload tenta ler de forma mais tolerante
-- Datas como `01/02/2024` sao tratadas com `dayfirst=True`
+- O upload aceita `CSV` e `XLSX`.
+- Para `CSV`, a leitura tenta lidar com diferentes codificacoes e separadores.
+- Datas sao interpretadas com `dayfirst=True`.
+- O projeto esta com `DEBUG = True` em [datadash/settings.py](/media/bardo/Developer/Repositorio/Portifolio/Minerva-AnalisedePlanilha/datadash/settings.py:1).
